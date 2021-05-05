@@ -82,8 +82,6 @@ def login(conn):
             publicUsers.append(conn)
             public(conn, username)
         elif chatType == '2':
-            global privateBook
-            privateBook=True
             onlineClients.append(conn)
             msg=recieve(conn)
             if msg=="w":

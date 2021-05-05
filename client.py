@@ -71,7 +71,7 @@ def send(msg):
     SERVER1.send(send_length)
     SERVER1.send(message)
 
-
+#chose type
 def target(username):
     while True:
         c = input("choose your chatting method: Enter 1 for public chat and 2 for private chat \n 3 to exit the app")
