@@ -7,7 +7,7 @@ import os
 HEADER = 64#to get msg size
 
 PORT = 8080
-SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = "192.168.1.22"
 Ip = socket.gethostbyname(SERVER)
 
 ADDR = (SERVER, PORT)
@@ -180,26 +180,19 @@ def chat(destcon,conn):
                     if conn in onlineClients:
                         onlineClients.remove(conn)
                 elif msg=="l":
-                    filename= recieve(conn)
-                    destcon.send("RECIEVE".encode(FORMAT))
-                    agree=recieve(destcon)
-                    if agree=="OK":
-                        destcon.send(filename.encode(FORMAT))
-                        time.sleep(5)
-                        print("establish with dest succ")
-                        while True:
-                            print("turn data")
-                            data =conn.recv(2048)
-                            destcon.send(data)
-                            if not data:
-                                break
-                            if data==None:
-                                break
-
-                        print('Successfully get the file')
-                        conn.send("OK".encode(FORMAT))
+                    filetype= recieve(conn)
+                    destcon.send(filetype.encode(FORMAT))
+                    print("establish with dest succ")
+                    print("sneding data")
+                    if filetype==".txt":
+                        data =conn.recv(2048)
+                        destcon.send(data)
                     else:
-                        conn.send("Your friend refused the file, sending failed.".encode(FORMAT))
+                        data = conn.recv(700000000)
+                        destcon.send(data)
+                    print('Successfully get the file')
+                    conn.send("OK".encode(FORMAT))
+
 
                 else:
                     msg = f'{msg}\n'

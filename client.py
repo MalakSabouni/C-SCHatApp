@@ -9,7 +9,7 @@ FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 # my ip public for Feature 7:7. Clients and server must not be on the same network (WiFi)
 SERVER1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client = socket.gethostbyname(socket.gethostname())
+client = "192.168.1.22"
 ADDR = (client, PORT)
 privateBook = False
 SERVER1.connect(ADDR)
@@ -162,15 +162,16 @@ def chat(usernme, destUser):
             message = SERVER1.recv(2048).decode(FORMAT)
             print(f'{destUser}: {message}')
         elif action=="send me":
-            type = SERVER1.recv(1024).decode(FORMAT)
+            type = SERVER1.recv(4).decode(FORMAT)
             if type:
                 fname=input("enter name of file: ")
                 with open(fname+type, 'wb') as f:
                     if type==".txt":
                         data = SERVER1.recv(2048)
                         f.write(data)
+                        f.close()
                     else:
-                        data = SERVER1.recv(70000000)
+                        data = SERVER1.recv(700000000)
                         f.write(data)
 
                          # write data to a file
@@ -181,19 +182,18 @@ def chat(usernme, destUser):
                 print("your friend didnot share you file yet, try again")
 
         elif action== "l":
-            filename = input("enter path of the file with extend example: file.png: ")
+            filename = input("enter path of the file : ")
+            filetype= input("enter file type, example: .png: ")
             send(action)
-            f = open(filename, 'rb')
+            send(filetype)
+            f = open(filename+filetype, 'rb')
             l = f.read(2048)
             while (l):
                 SERVER1.send(l)
                 l = f.read(2048)
             f.close()
-            replay=SERVER1.recv(1000).decode(FORMAT)
-            if replay=="OK":
-                print('Done sending')
-            else:
-                print(replay)
+            print('Done sending')
+
         else :
             send(action)
 
