@@ -180,16 +180,16 @@ def chat(destcon,conn):
                     if conn in onlineClients:
                         onlineClients.remove(conn)
                 elif msg=="l":
-                    fileexc= recieve(conn)
+                    filename= recieve(conn)
                     destcon.send("RECIEVE".encode(FORMAT))
                     agree=recieve(destcon)
                     if agree=="OK":
-                        destcon.send(fileexc.encode(FORMAT))
-                        time.sleep(10)
+                        destcon.send(filename.encode(FORMAT))
+                        time.sleep(5)
                         print("establish with dest succ")
                         while True:
                             print("turn data")
-                            data =conn.recv(1024)
+                            data =conn.recv(2048)
                             destcon.send(data)
                             if not data:
                                 break
@@ -197,6 +197,7 @@ def chat(destcon,conn):
                                 break
 
                         print('Successfully get the file')
+                        conn.send("OK".encode(FORMAT))
                     else:
                         conn.send("Your friend refused the file, sending failed.".encode(FORMAT))
 
