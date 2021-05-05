@@ -16,7 +16,7 @@ SERVER1.connect(ADDR)
 
 
 def startApp():
-    print("hello that is my chat app")
+    print("hello that is Malak & Wajiha & Maimonah chat app project")
     while True:
         c = input("please enter 1 to login and 2 to signup\n")
         if c == '1':
@@ -83,9 +83,9 @@ def target(username):
             global privateBook
             privateBook = True
             x = input(
-                "You are now in private room chat\n press any thing to wait for someone call you\npress you press w if you know address to contact with \n Enter exit0 to exit.. ")
+                "You are now in private room chat\n press any thing to wait for someone call you\npress you press W if you know address to contact with \n Enter exit0 to exit.. ")
             if x == "w":
-                send("w")
+                send(x.lower())
                 priChat(username)
             elif x == "exit0":
                 target(username)
@@ -114,20 +114,16 @@ def pupChat(username):
     greet = SERVER1.recv(2048).decode(FORMAT)
     print(greet)
     while connect:
-        try:
-            message = input(">>")
-            if message == "exit0":
-                connect = False
-            elif message=="":
-                message = SERVER1.recv(2048).decode(FORMAT)
-                if message:
-                    print(message)
-            else:
-                send(message)
-                print(f'{username:}{message}')
-
-        except:
-            continue
+        message = input(">>")
+        if message == "exit0":
+            connect = False
+        elif message=="":
+            message = SERVER1.recv(2048).decode(FORMAT)
+            if message:
+                print(message)
+        else:
+            send(message)
+            print(f'{username}: {message}')
 
     target(username)
 
@@ -151,7 +147,8 @@ def priChat(username):
 
 
 def chat(usernme, destUser):
-    print(f'hi {usernme} you are in private chat with {destUser} enter SHARE to share files, and exit0 to exit\n')
+    print(f'hi {usernme} you are in private chat with {destUser}'
+          f'\n enter SHARE to share files,SEND to recieve file (only if your friend will share) and exit0 to exit\n')
     connect = True
     while connect:
         action = input(">>")
@@ -159,29 +156,35 @@ def chat(usernme, destUser):
             send("exit")
             connect = False
         elif action== "":
-            message = SERVER1.recv(2048).decode(FORMAT)
-            print(f'{destUser}: {message}')
-        elif action=="send me":
-            type = SERVER1.recv(4).decode(FORMAT)
-            if type:
-                fname=input("enter name of file: ")
-                with open(fname+type, 'wb') as f:
-                    if type==".txt":
-                        data = SERVER1.recv(2048)
-                        f.write(data)
-                        f.close()
+            type = SERVER1.recv(6).decode(FORMAT)
+            if type=="RECIVE":
+                agree= input("your friend want to share file with you press Y if you are agree and anything for No")
+                if agree.capitalize()=="Y":
+                    send("Y")
+                    type = SERVER1.recv(4).decode(FORMAT)
+                    if type:
+                        fname = input("enter name of file: ")
+                        with open(fname + type, 'wb') as f:
+                            if type == ".txt":
+                                data = SERVER1.recv(2048)
+                                f.write(data)
+                                f.close()
+                            else:
+                                data = SERVER1.recv(700000000)
+                                f.write(data)
+
+                                # write data to a file
+
+                                f.close()
+                            print('Successfully get the file')
                     else:
-                        data = SERVER1.recv(700000000)
-                        f.write(data)
-
-                         # write data to a file
-
-                        f.close()
-                    print('Successfully get the file')
+                        print("your friend didnot share you file yet, try again")
             else:
-                print("your friend didnot share you file yet, try again")
+                message = SERVER1.recv(2048).decode(FORMAT)
+                print(f'{destUser}: {type+message}')
 
-        elif action== "l":
+
+        elif action== "SHARE":
             filename = input("enter path of the file : ")
             filetype= input("enter file type, example: .png: ")
             send(action)
@@ -192,7 +195,11 @@ def chat(usernme, destUser):
                 SERVER1.send(l)
                 l = f.read(2048)
             f.close()
-            print('Done sending')
+            state = SERVER1.recv(4).decode(FORMAT)
+            if state=="SUCC":
+                print('Done sending')
+            else:
+                print("your friend did not accept your file:| try again after informing him")
 
         else :
             send(action)

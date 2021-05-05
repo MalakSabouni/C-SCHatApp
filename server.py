@@ -179,20 +179,24 @@ def chat(destcon,conn):
                     connect = False
                     if conn in onlineClients:
                         onlineClients.remove(conn)
-                elif msg=="l":
+                elif msg=="SHARE":
                     filetype= recieve(conn)
-                    destcon.send(filetype.encode(FORMAT))
-                    print("establish with dest succ")
-                    print("sneding data")
-                    if filetype==".txt":
-                        data =conn.recv(2048)
-                        destcon.send(data)
+                    destcon.send("RECIVE".encode(FORMAT))
+                    agree= destcon.recv(1).decode(FORMAT)
+                    if agree=="Y":
+                        destcon.send(filetype.encode(FORMAT))
+                        print("establish with dest succ")
+                        print("sneding data")
+                        if filetype==".txt":
+                            data =conn.recv(2048)
+                            destcon.send(data)
+                        else:
+                            data = conn.recv(700000000)
+                            destcon.send(data)
+                        print('Successfully get the file')
+                        conn.send("SUCC".encode(FORMAT))
                     else:
-                        data = conn.recv(700000000)
-                        destcon.send(data)
-                    print('Successfully get the file')
-                    conn.send("OK".encode(FORMAT))
-
+                        conn.send("FAIL".encode(FORMAT))
 
                 else:
                     msg = f'{msg}\n'
