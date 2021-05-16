@@ -11,6 +11,7 @@ SERVER = "192.168.1.22"
 Ip = socket.gethostbyname(SERVER)
 
 ADDR = (SERVER, PORT)
+
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"
 NEWACCOUNT="NEW"
@@ -20,12 +21,17 @@ FAIL="FAIL"
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
 server.bind(ADDR)
+
 users= []
 list_of_clients=[]
 publicroom = []
 publicUsers=[]
 onlineClients=[]
 privateState=False
+import urllib.request
+
+#ADDR2=("178.87.196.59",PORT)
+#server.bind()
 def handle_client(conn,addr):
     connect=True
     while connect:
