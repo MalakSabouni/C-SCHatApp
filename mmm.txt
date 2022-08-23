@@ -1,8 +1,0 @@
-The if statement if not data is equivalent to writing if data != "", while the empty string your server receives is b''. You have several options to fix it.
-
-data = conn.recv(1024).decode() is the proper way to allocate the data sent by the client. You can now print(data) or compare data to an empty string.
-
-If you still don't want to decode() your message you could change your if statement to if data != b'' or if data is not None.
-
-Update
-If it wasn't clear, your str(data) conversion causes the if statement to work unproperly, which is set to False without allowing you to break when a client disconnects.
